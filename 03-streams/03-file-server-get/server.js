@@ -7,6 +7,7 @@ const server = new http.Server();
 server.on('request', (req, res) => {
   const url = new URL(req.url, `http://${req.headers.host}`);
   const pathname = url.pathname.slice(1);
+
   const filepath = path.join(__dirname, 'files', pathname);
 
   switch (req.method) {
@@ -31,26 +32,23 @@ server.on('request', (req, res) => {
       });
 
       readableStream.on('end', () => {
-        res.writeHead(200);
+        res.statusCode = 200;
         res.end(Buffer.concat(body));
         console.log('File has been downloaded successfully');
       });
 
       readableStream.on('error', (err) => {
-        res.writeHead(500);
-        res.end('Error while reading the file has been occured');
+        res.statusCode = 500;
+        res.end('Error occured while reading the file');
         console.log('Error in read stream');
       });
 
       res.on('error', (err) => {
-        res.writeHead(500);
-        res.end('Error has been occured');
+        res.statusCode = 500;
+        res.end('Error occured');
         console.log('Error in write stream');
       });
 
-      break;
-
-    case 'POST':
       break;
 
     default:
